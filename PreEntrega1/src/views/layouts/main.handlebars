@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>VerdeVital</title>
+        <link rel="stylesheet" href="./css/styles.css">
+        <link rel="icon" href="./images/pages/icon.png">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    </head>
+    <body>
+        {{#unless isRegisterPage}}
+            <header>
+                <div class="nav-container">
+                    <nav>
+                        <ul>
+                            <li><a href="/">INICIO</a></li>
+                            <li><a href="/api/sessions/register">REGISTRO</a></li>
+                            <li><a href="/api/sessions/login">LOGIN</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
+        {{/unless}}
+
+        {{{body}}}
+    </body>
+</html>
