@@ -1,0 +1,117 @@
+import productModel from "../models/product.model.js";
+
+class ProductManager {
+    async addProduct({ name, description, code, stock, category, image, price }) {
+        try {
+            if (!name || !description || !code || !stock || !category || !price) {
+                console.log("Todos los campos son obligatorios");
+                return;
+            }
+            const existeProducto = await productModel.findOne({ code: code });
+            if (existeProducto) {
+                return;
+            }
+            const newProduct = new productModel({
+                name,
+                description,
+                code,
+                status: true,
+                stock,
+                category,
+                image,
+                price
+            });
+            await newProduct.save();
+        } catch (error) {
+            console.log("Error al agregar producto", error);
+            throw error;
+        }
+    }
+    async getProducts({ limit = 10, page = 1, sort, query } = {}) {
+        try {
+            const skip = (page - 1) * limit;
+            let queryOptions = {};
+            if (query) {
+                queryOptions = { category: query };
+            }
+            const sortOptions = {};
+            if (sort) {
+                if (sort === 'asc' || sort === 'desc') {
+                    sortOptions.price = sort === 'asc' ? 1 : -1;
+                }
+            }
+            const productos = await productModel
+                .find(queryOptions)
+                .sort(sortOptions)
+                .skip(skip)
+                .limit(limit);
+            const totalProducts = await productModel.countDocuments(queryOptions);
+            const totalPages = Math.ceil(totalProducts / limit);
+            const hasPrevPage = page > 1;
+            const hasNextPage = page < totalPages;
+            return {
+                docs: productos,
+                totalPages,
+                prevPage: hasPrevPage ? page - 1 : null,
+                nextPage: hasNextPage ? page + 1 : null,
+                page,
+                hasPrevPage,
+                hasNextPage,
+                prevLink: hasPrevPage ? `/api/products?limit=${limit}&page=${page - 1}&sort=${sort}&query=${query}` : null,
+                nextLink: hasNextPage ? `/api/products?limit=${limit}&page=${page + 1}&sort=${sort}&query=${query}` : null,
+            };
+        } catch (error) {
+            console.log("Error al obtener los productos", error);
+            throw error;
+        }
+    }
+    async getProductById(id) {
+        try {
+            const producto = await productModel.findById(id);
+            if (!producto) {
+                console.log("Producto no encontrado");
+                return null;
+            }
+            return producto;
+        } catch (error) {
+            console.log("Error al traer un producto por id");
+        }
+    }
+    async updateProduct(id, productoActualizado) {
+        try {
+            const updateado = await productModel.findByIdAndUpdate(id, productoActualizado);
+            if (!updateado) {
+                console.log("No se encuentra che el producto");
+                return null;
+            }
+            console.log("Producto actualizado con exito, como todo en mi vidaa!");
+            return updateado;
+        } catch (error) {
+            console.log("Error al actualizar el producto", error);
+
+        }
+    }
+    async deleteProduct(id) {
+        try {
+            const deleteado = await productModel.findByIdAndDelete(id);
+            if (!deleteado) {
+                return null;
+            }
+            console.log("Producto eliminado correctamente");
+        } catch (error) {
+            console.log("Error al eliminar el producto", error);
+            throw error;
+        }
+    }
+    async getProductsTotal() {
+        try {
+            const productos = await productModel.find();
+            return productos;
+        } catch (error) {
+            console.log("Error al obtener los productos", error);
+            throw error;
+        }
+    }
+}
+
+export default ProductManager;
