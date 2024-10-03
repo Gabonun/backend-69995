@@ -1,0 +1,107 @@
+<body>
+    <header>
+        <div class="paragraph">
+            <p>Bienvenida/o {{user.email}} </p>
+        </div>
+        <div class="nav-container">
+            <nav>
+                <ul>
+                    <li><a href="/api/sessions/profile">MI PERFIL</a></li>
+                    <li><a href="/api/sessions/logout">CERRAR SESIÓN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="products">
+            <h1 class="title">AGREGAR PRODUCTOS</h1>
+            <form id="formAddProduct" action="/api/sessions/realtimeproducts" method="POST">
+                <input type="text" name="title" placeholder="NOMBRE DEL PRODUCTO" required></label>
+                <input type="text" name="description" placeholder="DESCRIPCIÓN" required></label>
+                <input type="number" name="price" placeholder="PRECIO" required></label>
+                <input type="number" name="stock" placeholder="STOCK" required></label>
+                <input type="text" name="code" required placeholder="CÓDIGO"></label>
+                <input type="text" name="category" placeholder="CATEGORÍA" required></label>
+                <input type="text" name="thumbnails" value="Sin Imagen"></label>
+                <select typoe="boolean" name="status">
+                    <option value="true"> ACTIVO </option>
+                    <option value="false"> INACTIVO </option>
+                </select>
+                <button type="submit">AGREGAR PRODUCTO</button>
+            </form>
+
+            <section class="products">
+                <h1 class="title">PRODUCTOS DISPONIBLES</h1>
+                <div class="container-products">
+                    <div class="products--grid">
+                        {{#each productos}}
+                        <div class="product-card">
+                            <h4 class="product-id">ID: {{this._id}}</h4>
+                            <h4 class="product-id">Código: {{this.code}}</h4>
+                            <h1 class="product-title">{{this.name}}</h1>
+                            <h2 class="product-description">{{this.description}}</h2>
+                            <h2 class="product-stock">Stock disponible: {{this.stock}} | Categoría: {{this.category}}
+                            </h2>
+                            <p class="product-price">Precio: ${{this.price}}</p>
+                            <br>
+
+                            <form id="delete-form">
+                                <input type="text" name="productId"
+                                    placeholder="PARA ELIMINAR INGRESAR EL ID DEL PRODUCTO" required>
+                                <button class="trash" type="submit">ELIMINAR</button>
+                            </form>
+
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </section>
+    </main>
+</body>
+
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script src="js/main.js"></script>
+ <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (!window.socket) {
+          const socket = io();
+          window.socket = socket;
+
+          socket.on('updateProducts', (products) => {
+            console.log(products);
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+            products.forEach((product) => {
+              const listItem = document.createElement('li');
+              listItem.textContent = `ID: ${product.id} - Title: ${product.title} - Price: $${product.price}`;
+              productList.appendChild(listItem);
+            });
+          });
+
+          const productForm = document.getElementById('product-form');
+          if (productForm) {
+            productForm.addEventListener('submit', (e) => {
+              e.preventDefault();
+              const formData = new FormData(productForm);
+              const product = {};
+              formData.forEach((value, key) => {
+                product[key] = value;
+              });
+              socket.emit('createProduct', product);
+              productForm.reset();
+            });
+          }
+
+          const deleteForm = document.getElementById('delete-form');
+          if (deleteForm) {
+            deleteForm.addEventListener('submit', (e) => {
+              e.preventDefault();
+              const productId = new FormData(deleteForm).get('productId');
+              socket.emit('deleteProduct', productId);
+              deleteForm.reset();
+            });
+          }
+        }
+      });
+    </script>

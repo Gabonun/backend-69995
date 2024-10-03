@@ -1,0 +1,21 @@
+<body>
+    <header>
+        <div class="paragraph">
+            <p>Bienvenida/o {{user.email}} - {{user.role}} </p>
+        </div>
+        <div class="nav-container">
+            <nav>
+                <ul>
+                    <li><a href="/api/sessions/profile">MI PERFIL</a></li>
+                    <li><a href="/api/sessions/logout">CERRAR SESIÓN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="button-container">
+        <a href="products" class="btn btn-primary">Productos</a>
+        <a href="realtimeproducts" class="btn btn-secondary">Administrar Productos</a>
+        <a href="/carts/{{user.cartId}}" class="btn btn-tertiary">Carrito</a>
+    </div>
+</body>

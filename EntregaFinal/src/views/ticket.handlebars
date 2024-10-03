@@ -1,0 +1,31 @@
+
+<body>
+    <h1>Sumario</h1>
+
+    <h2>Detalle</h2>
+    <p><strong>Code:</strong> {{ticket.code}}</p>
+    <p><strong>Date:</strong> {{ticket.purchase_datetime}}</p>
+    <p><strong>Total Amount:</strong> ${{ticket.amount}}</p>
+    <p><strong>Purchaser:</strong> {{ticket.purchaser}}</p>
+
+    <h2>Products Purchased</h2>
+    <ul>
+        {{#each ticket.productsPurchased}}
+            <li>{{this.title}} - Quantity: {{this.quantity}} - Price: ${{this.price}}</li>
+        {{/each}}
+    </ul>
+
+    {{#if ticket.productsOutOfStock.length}}
+        <h2>Productos Sin productsOutOfStock</h2>
+        <ul>
+            {{#each ticket.productsOutOfStock}}
+                <li>{{this.title}} - Cantidad no Disponible: {{this.quantityUnavailable}}</li>
+            {{/each}}
+        </ul>
+    {{/if}}
+
+    <div>
+        <a href="/products">Volver</a>
+    </div>
+</body>
+</html>

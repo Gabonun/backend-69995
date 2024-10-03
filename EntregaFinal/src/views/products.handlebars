@@ -1,0 +1,80 @@
+<body>
+    <header>
+        <div class="paragraph">
+            <p>Bienvenida/o {{user.email}} </p>
+        </div>
+        <div class="nav-container">
+            <nav>
+                <ul>
+                    <li><a href="/api/sessions/profile">MI PERFIL</a></li>
+                    <li><a href="/api/sessions/logout">CERRAR SESIÓN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="products">
+            <h1 class="title">PRODUCTOS</h1>
+            <br>
+            <div class="products-grid">
+                {{#each productos}}
+                <div>
+                    <h4 Código: {{this.code}}</h4>
+                    <h1>{{this.name}}</h1>
+                    <p>Precio: ${{this.price}}</p>
+                    <h2>Stock disponible: {{this.stock}}</h2>
+                    <h2>Categoría: {{this.category}}</h2>
+                    <br>
+                    <a href="/products/{{_id}}" class="btn-link"><button class="btn-prima">VER DETALLE</button></a>
+                    <br>
+                    <button onclick="addToCart('{{this._id}}')">Add to Cart</button>
+                    <br>
+                    <a href="/api/carts/add-product" class="btn-link"><button class="btn-secon">AGREGAR AL
+                            CARRITO</button></a>
+                </div>
+                {{/each}}
+            </div>
+            <br><br>
+            <div class="pagination-container">
+                {{#if hasNextPage}}
+                <a href="/api/sessions/products?page={{nextPage}}" class="pagination-link"> Siguiente </a>
+                {{/if}}
+                {{#if hasPrevPage}}
+                <a href="/api/sessions/products?page={{prevPage}}" class="pagination-link"> Anterior </a>
+                {{/if}}
+
+                <p class="pagination-text">Página {{currentPage}} de {{totalPages}}</p>
+            </div>
+            <div>
+                <a href="/carts" Volver al Carrito</a>
+            </div>
+        </section>
+    </main>
+</body>
+
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+
+    function addToCart(productId) {
+        console.log(productId)
+        fetch('/api/carts/add-product', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ productId }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert('Product added to cart');
+                } else {
+                    alert('Error adding product to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>

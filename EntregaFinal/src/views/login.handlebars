@@ -1,0 +1,29 @@
+<body>
+    <header>
+        <a href="/">
+            <span>INICIO</span>
+        </a>
+    </header>
+
+    <main class="seccionRegistrarse">
+        <form id="loginForm" action="/api/sessions/login" method="post" onsubmit="return validateForm()">
+            <h2>Iniciar Sesión</h2>
+            <div>
+                <input type="email" placeholder="Email" id="email" name="email">
+            </div>
+            <div>
+                <input type="password" placeholder="Contraseña" id="password" name="password">
+            </div>
+            <div>
+                <input class="boton" type="submit" value="Iniciar Sesión">
+            </div>
+            <div>
+                <a class="botonGithub" href="/api/sessions/github">Github</a>
+            </div>
+            <div class="help">
+                <p>¿Aún no estás registrado?</p>
+                <a class="helpLink" href="/api/sessions/register">Registrarse</a>
+            </div>
+        </form>
+    </main>
+</body>

@@ -1,0 +1,63 @@
+<body>
+  <header>
+    <div class="paragraph">
+      <p>Bienvenida/o {{user.email}}</p>
+    </div>
+    <div class="nav-container">
+      <nav>
+        <ul>
+          <li><a href="/api/sessions/profile">MI PERFIL</a></li>
+          <li><a href="/api/sessions/logout">CERRAR SESIÓN</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="products">
+      <h1 class="title">CARRITO DE COMPRAS</h1>
+      <div class="product-card">
+        {{#each products}}
+        <div class="product--card"> 
+          <h1 class="product--title">{{this.products.title}}</h1>
+          <p class="product--stock">Precio unitario: ${{this.product.price}} | Cantidad: {{this.quantity}}</p>
+          <button onclick="removeFromCart('{{this.product._id}}')">Remove</button>
+        </div>
+        {{/each}}
+      </div>
+      <br>
+      <section class="container">
+        <form action="/carts/{{user.cartId}}/purchase" method="POST">
+          <button class="btn-prima" type="submit">FINALIZAR COMPRA</button>
+        </form>
+      </section>
+    </section>
+  </main>
+</body>
+
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function removeFromCart(productId) {
+    fetch(`/api/carts/remove-product`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ productId }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          alert('Product removed from cart');
+          window.location.reload();
+        } else {
+          alert('Error removing product from cart');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+</script>
+</body>
